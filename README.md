@@ -13,12 +13,13 @@ It helps accounting students analyze business transactions, understand journal e
 - Student study tips
 - Accounting equation guidance
 - Local-first AI inference with QVAC
+- Accounting guardrails for common beginner mistakes
 
 ## QVAC
 
 LedgerLens uses Tether's QVAC SDK version `0.19.1`.
 
-The application calls:
+The application uses:
 
 - `loadModel`
 - `completion`
@@ -38,5 +39,5 @@ No external AI API key is required for the inference workflow.
 Clone the repository:
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+git clone https://github.com/correllameming-crypto/ledgerlens-qvac.git
 cd ledgerlens-qvac
