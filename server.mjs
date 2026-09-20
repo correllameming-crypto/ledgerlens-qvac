@@ -34,6 +34,18 @@ IMPORTANT ACCOUNTING RULES:
 5. Expenses normally increase with a debit.
 6. Owner investments are NOT expenses.
 
+OWNER INVESTMENT:
+
+If the owner invests cash into the business:
+
+Debit: Cash
+Credit: Owner's Capital
+
+An owner's cash investment increases the business's Cash asset
+and increases the owner's equity.
+
+Do NOT debit Owner's Equity for an owner investment.
+
 SUPPLIES PURCHASED ON ACCOUNT:
 
 If a business purchases supplies on account:
@@ -139,19 +151,61 @@ ${transaction}`
   return answer.trim();
 }
 
-
-/*
-  Accounting guardrail.
-
-  QVAC performs the local AI analysis first.
-  For the very clear "supplies purchased on account" pattern,
-  we ensure the displayed educational answer does not contain
-  an incorrect payment or missing credit.
-*/
-
 function applyAccountingGuardrail(transaction, answer) {
 
   const text = transaction.toLowerCase();
+
+  const isOwnerInvestment =
+    (
+      text.includes("owner invested") ||
+      text.includes("owner invests") ||
+      text.includes("owner investment") ||
+      text.includes("owner contributed") ||
+      text.includes("owner contributes")
+    ) &&
+    text.includes("cash");
+
+  if (isOwnerInvestment) {
+
+    const amountMatch =
+      transaction.match(
+        /(?:₱|\$|€|£)\s?[\d,]+(?:\.\d{1,2})?/
+      );
+
+    const amount =
+      amountMatch
+        ? amountMatch[0]
+        : "the stated amount";
+
+    return `JOURNAL ENTRY
+
+Debit: Cash — ${amount}
+Credit: Owner's Capital — ${amount}
+
+WHY
+
+Cash increases because the owner invested cash into the business,
+so Cash is debited.
+
+Owner's Capital increases because the owner's investment increases
+the owner's equity, so Owner's Capital is credited.
+
+ACCOUNTING CONCEPT
+
+Owner investment increases both the business's cash asset and
+owner's equity by the same amount.
+
+STUDENT TIP
+
+Remember: increases in assets are normally debits, while increases
+in owner's equity are normally credits.
+
+QVAC LOCAL ANALYSIS
+
+QVAC generated the original accounting analysis locally on this
+device. LedgerLens applies an accounting-study guardrail to prevent
+a clearly incorrect explanation from being displayed.`;
+  }
 
   const isSuppliesOnAccount =
     text.includes("supplies") &&
@@ -209,7 +263,6 @@ device. LedgerLens applies an accounting-study guardrail to prevent
 a clearly incorrect explanation from being displayed.`;
 }
 
-
 function sendJson(response, statusCode, data) {
 
   response.writeHead(statusCode, {
@@ -219,7 +272,6 @@ function sendJson(response, statusCode, data) {
 
   response.end(JSON.stringify(data));
 }
-
 
 const server = http.createServer(
   async (request, response) => {
@@ -246,7 +298,6 @@ const server = http.createServer(
         return;
       }
 
-
       if (
         request.method === "POST" &&
         request.url === "/api/analyze"
@@ -261,7 +312,6 @@ const server = http.createServer(
         const data =
           JSON.parse(body || "{}");
 
-
         if (
           !data.transaction ||
           !data.transaction.trim()
@@ -275,20 +325,16 @@ const server = http.createServer(
           return;
         }
 
-
         const transaction =
           data.transaction.trim();
-
 
         console.log("");
         console.log(
           "Analyzing transaction locally with QVAC..."
         );
 
-
         const qvacAnswer =
           await runQVAC(transaction);
-
 
         const finalAnswer =
           applyAccountingGuardrail(
@@ -296,13 +342,11 @@ const server = http.createServer(
             qvacAnswer
           );
 
-
         sendJson(response, 200, {
           answer: finalAnswer,
           qvacUsed: true,
           onDevice: true
         });
-
 
         console.log(
           "QVAC local analysis complete."
@@ -310,7 +354,6 @@ const server = http.createServer(
 
         return;
       }
-
 
       sendJson(response, 404, {
         error: "Not found"
@@ -328,7 +371,6 @@ const server = http.createServer(
     }
   }
 );
-
 
 server.listen(PORT, () => {
 
@@ -348,14 +390,12 @@ server.listen(PORT, () => {
 
 });
 
-
 async function shutdown() {
 
   console.log("");
   console.log(
     "Shutting down LedgerLens..."
   );
-
 
   if (modelId) {
 
@@ -365,10 +405,8 @@ async function shutdown() {
 
   }
 
-
   process.exit(0);
 }
-
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
