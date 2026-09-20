@@ -2,35 +2,30 @@
 
 LedgerLens is a local-first accounting study companion powered by Tether's QVAC SDK.
 
-It helps accounting students analyze basic business transactions, understand journal entries, and see how transactions affect the accounting equation.
+It helps accounting students analyze business transactions, understand journal entries, and learn the accounting equation.
 
-## What it does
+## Features
 
-LedgerLens takes an accounting transaction such as:
-
-> The business purchased ₱10,000 of supplies on account.
-
-It provides:
-
-- Journal entry
-- Explanation of the debit and credit
-- Accounting concept
-- Student tip
-- Accounting equation impact
+- AI-powered accounting transaction analysis
+- Journal entry explanations
+- Debit and credit reasoning
+- Accounting concept explanations
+- Student study tips
+- Accounting equation guidance
+- Local-first AI inference with QVAC
 
 ## QVAC
 
-LedgerLens uses Tether's QVAC SDK to run AI inference locally on the user's machine.
+LedgerLens uses Tether's QVAC SDK version `0.19.1`.
 
-The project uses:
+The application calls:
 
-- `@qvac/sdk` version `0.19.1`
 - `loadModel`
 - `completion`
 
-The QVAC model is downloaded locally the first time it is used.
+The QVAC model is loaded and used locally on the user's device.
 
-No external AI API key is required for the AI inference.
+No external AI API key is required for the inference workflow.
 
 ## Requirements
 
