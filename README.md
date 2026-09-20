@@ -38,6 +38,8 @@ No external AI API key is required for the inference workflow.
 
 Clone the repository:
 
+[https://github.com/correllameming-crypto/ledgerlens-qvac.git](https://github.com/correllameming-crypto/ledgerlens-qvac.git)
+
 ```bash
 git clone https://github.com/correllameming-crypto/ledgerlens-qvac.git
 cd ledgerlens-qvac
