@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LedgerLens — Local Accounting AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f5f7fb;
+      color: #182033;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 40px 0 70px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 38px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #182033;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .hero {
+      margin-bottom: 32px;
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: clamp(40px, 7vw, 64px);
+      line-height: 1.04;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #667085;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 8px 13px;
+      background: white;
+      border: 1px solid #e1e5ed;
+      border-radius: 999px;
+      color: #526078;
+      font-size: 13px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e1e5ed;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 35px rgba(20, 30, 50, 0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      padding: 15px;
+      border: 1px solid #dce2ec;
+      border-radius: 13px;
+      font: inherit;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #315bd6;
+      box-shadow: 0 0 0 3px rgba(49, 91, 214, 0.1);
+    }
+
+    .analyze {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: #315bd6;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .analyze:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .examples {
+      margin-top: 18px;
+    }
+
+    .examples-title {
+      margin-bottom: 8px;
+      color: #7a8498;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .example {
+      margin: 4px 4px 0 0;
+      padding: 8px 11px;
+      border: 1px solid #dce2ec;
+      border-radius: 999px;
+      background: white;
+      color: #4d5a70;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .result {
+      min-height: 310px;
+      white-space: pre-wrap;
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.65;
+      color: #273248;
+    }
+
+    .placeholder {
+      color: #8a94a6;
+      font-family: inherit;
+    }
+
+    .message {
+      margin-top: 12px;
+      color: #7a8498;
+      font-size: 12px;
+    }
+
+    /* ACCOUNTING EQUATION */
+
+    .equation-card {
+      margin-top: 20px;
+    }
+
+    .equation-intro {
+      color: #667085;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .equation {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .equation-box {
+      padding: 20px;
+      border: 1px solid #e1e5ed;
+      border-radius: 15px;
+      background: #fafbfc;
+      min-height: 125px;
+    }
+
+    .equation-label {
+      color: #7a8498;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .equation-value {
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .equation-symbol {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #98a2b3;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .impact {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #f7f9fc;
+      border: 1px solid #e7eaf0;
+    }
+
+    .impact-title {
+      font-size: 12px;
+      color: #7a8498;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .impact-text {
+      margin-top: 7px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .balance {
+      margin-top: 14px;
+      padding: 12px 15px;
+      border-radius: 12px;
+      background: #f1f5ff;
+      color: #315bd6;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #7a8498;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .equation {
+        grid-template-columns: 1fr;
+      }
+
+      .equation-symbol {
+        padding: 3px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="container">
+
+  <header class="header">
+    <div class="logo">LL</div>
+    <div class="brand">LedgerLens</div>
+  </header>
+
+  <section class="hero">
+
+    <h1>
+      Learn the entry.<br>
+      Understand the impact.
+    </h1>
+
+    <p>
+      A local AI accounting study companion powered by QVAC.
+      Analyze transactions, understand the journal entry, and
+      see how each transaction affects the accounting equation.
+    </p>
+
+    <div class="status">
+      ● QVAC 0.19.1 · On-device AI · No API key
+    </div>
+
+  </section>
+
+
+  <section class="app">
+
+    <div class="card">
+
+      <h2>Accounting transaction</h2>
+
+      <label for="transaction">
+        Describe what happened
+      </label>
+
+      <textarea
+        id="transaction"
+        placeholder="Example:
+
+The business purchased ₱10,000 of supplies on account."
+      ></textarea>
+
+      <button
+        class="analyze"
+        id="analyzeButton"
+      >
+        Analyze with QVAC
+      </button>
+
+      <div class="examples">
+
+        <div class="examples-title">
+          TRY AN EXAMPLE
+        </div>
+
+        <button
+          class="example"
+          data-text="The owner invested ₱50,000 cash into the business."
+        >
+          Owner investment
+        </button>
+
+        <button
+          class="example"
+          data-text="The business purchased ₱10,000 of supplies on account."
+        >
+          Supplies on account — ₱10,000
+        </button>
+
+        <button
+          class="example"
+          data-text="The business earned ₱8,000 cash from providing services."
+        >
+          Service revenue
+        </button>
+
+        <button
+          class="example"
+          data-text="The business paid ₱3,000 cash for office rent."
+        >
+          Rent payment
+        </button>
+
+      </div>
+
+      <div
+        class="message"
+        id="statusMessage"
+      >
+        Ready. QVAC runs the AI inference locally.
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>LedgerLens analysis</h2>
+
+      <div
+        class="result placeholder"
+        id="result"
+      >
+        Your journal entry and accounting explanation
+        will appear here.
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="card equation-card">
+
+    <h2>Accounting Equation Lens</h2>
+
+    <p class="equation-intro">
+      See which parts of the accounting equation change
+      when the transaction occurs.
+    </p>
+
+    <div class="equation">
+
+      <div class="equation-box">
+
+        <div class="equation-label">
+          Assets
+        </div>
+
+        <div
+          class="equation-value"
+          id="assetsValue"
+        >
+          Waiting for transaction
+        </div>
+
+      </div>
+
+      <div class="equation-symbol">=</div>
+
+      <div class="equation-box">
+
+        <div class="equation-label">
+          Liabilities
+        </div>
+
+        <div
+          class="equation-value"
+          id="liabilitiesValue"
+        >
+          Waiting for transaction
+        </div>
+
+      </div>
+
+      <div class="equation-symbol">+</div>
+
+      <div class="equation-box">
+
+        <div class="equation-label">
+          Owner's Equity
+        </div>
+
+        <div
+          class="equation-value"
+          id="equityValue"
+        >
+          Waiting for transaction
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="impact">
+
+      <div class="impact-title">
+        Transaction impact
+      </div>
+
+      <div
+        class="impact-text"
+        id="impactText"
+      >
+        Analyze a transaction to see its effect on the
+        accounting equation.
+      </div>
+
+    </div>
+
+
+    <div
+      class="balance"
+      id="balanceMessage"
+    >
+      ✓ The accounting equation remains balanced.
+    </div>
+
+  </section>
+
+
+  <div class="footer">
+
+    LedgerLens is an educational study tool.
+    Always verify accounting treatments with your course
+    materials or instructor.
+
+    <br><br>
+
+    AI inference is performed locally through QVAC.
+    No cloud AI API is used for the analysis.
+
+  </div>
+
+</main>
+
+
+<script>
+
+const transactionInput =
+  document.getElementById("transaction");
+
+const analyzeButton =
+  document.getElementById("analyzeButton");
+
+const result =
+  document.getElementById("result");
+
+const statusMessage =
+  document.getElementById("statusMessage");
+
+const assetsValue =
+  document.getElementById("assetsValue");
+
+const liabilitiesValue =
+  document.getElementById("liabilitiesValue");
+
+const equityValue =
+  document.getElementById("equityValue");
+
+const impactText =
+  document.getElementById("impactText");
+
+
+/*
+  Example buttons
+*/
+
+document
+  .querySelectorAll(".example")
+  .forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      transactionInput.value =
+        button.dataset.text;
+
+      transactionInput.focus();
+
+    });
+
+  });
+
+
+/*
+  Accounting Equation Lens
+*/
+
+function updateEquation(transaction) {
+
+  const text =
+    transaction.toLowerCase();
+
+  let assets =
+    "No specific change detected";
+
+  let liabilities =
+    "No specific change detected";
+
+  let equity =
+    "No specific change detected";
+
+  let impact =
+    "LedgerLens will use the transaction details to identify the affected accounts.";
+
+
+  /*
+    Supplies purchased on account
+  */
+
+  if (
+    text.includes("supplies") &&
+    (
+      text.includes("on account") ||
+      text.includes("on credit")
+    )
+  ) {
+
+    assets =
+      "Supplies\n↑ Asset";
+
+    liabilities =
+      "Accounts Payable\n↑ Liability";
+
+    equity =
+      "No change";
+
+    impact =
+      "The business receives supplies, increasing its assets. " +
+      "Because the purchase is on account, Accounts Payable " +
+      "also increases. Owner's equity is unchanged.";
+
+  }
+
+
+  /*
+    Owner investment
+  */
+
+  else if (
+    text.includes("owner invested") ||
+    text.includes("owner investment")
+  ) {
+
+    assets =
+      "Cash\n↑ Asset";
+
+    liabilities =
+      "No change";
+
+    equity =
+      "Owner's Capital\n↑ Equity";
+
+    impact =
+      "The owner's investment increases the business's cash " +
+      "and increases owner's equity by the same amount.";
+
+  }
+
+
+  /*
+    Service revenue received in cash
+  */
+
+  else if (
+    text.includes("earned") &&
+    text.includes("cash") &&
+    text.includes("service")
+  ) {
+
+    assets =
+      "Cash\n↑ Asset";
+
+    liabilities =
+      "No change";
+
+    equity =
+      "Revenue\n↑ Equity";
+
+    impact =
+      "Cash increases because the business received payment " +
+      "for services. Revenue increases owner's equity.";
+
+  }
+
+
+  /*
+    Rent payment
+  */
+
+  else if (
+    text.includes("rent") &&
+    text.includes("paid")
+  ) {
+
+    assets =
+      "Cash\n↓ Asset";
+
+    liabilities =
+      "No change";
+
+    equity =
+      "Rent Expense\n↓ Equity";
+
+    impact =
+      "Cash decreases when rent is paid. Rent expense reduces " +
+      "owner's equity.";
+
+  }
+
+
+  else {
+
+    assets =
+      "See journal entry";
+
+    liabilities =
+      "See journal entry";
+
+    equity =
+      "See journal entry";
+
+    impact =
+      "This transaction needs a more detailed accounting analysis.";
+
+  }
+
+
+  assetsValue.textContent =
+    assets;
+
+  liabilitiesValue.textContent =
+    liabilities;
+
+  equityValue.textContent =
+    equity;
+
+  impactText.textContent =
+    impact;
+
+}
+
+
+/*
+  QVAC analysis
+*/
+
+analyzeButton.addEventListener(
+  "click",
+  async () => {
+
+    const transaction =
+      transactionInput.value.trim();
+
+
+    if (!transaction) {
+
+      result.classList.add("placeholder");
+
+      result.textContent =
+        "Please enter an accounting transaction first.";
+
+      return;
+
+    }
+
+
+    analyzeButton.disabled = true;
+
+    result.classList.remove("placeholder");
+
+    result.textContent =
+      "QVAC is analyzing the transaction locally...";
+
+
+    statusMessage.textContent =
+      "Running local AI inference. Your transaction stays on this device.";
+
+
+    updateEquation(transaction);
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/analyze",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              transaction
+            })
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "The analysis failed."
+        );
+
+      }
+
+
+      result.textContent =
+        data.answer;
+
+
+      statusMessage.textContent =
+        "✓ Analysis complete — generated locally by QVAC.";
+
+
+    } catch (error) {
+
+      result.textContent =
+        "Something went wrong:\n\n" +
+        error.message;
+
+      statusMessage.textContent =
+        "Check the server window for details.";
+
+    }
+
+
+    analyzeButton.disabled = false;
+
+  }
+
+);
+
+</script>
+
+</body>
+</html>

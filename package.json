@@ -1,0 +1,13 @@
+{
+  "name": "ledgerlens-qvac",
+  "version": "1.0.0",
+  "description": "A local-first accounting study companion powered by QVAC.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@qvac/sdk": "0.19.1"
+  },
+  "license": "MIT"
+}
